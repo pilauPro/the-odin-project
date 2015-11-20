@@ -1,0 +1,80 @@
+#header{
+	text-align: right;
+}
+
+a, button{
+	font-family: arial,sans-serif;
+}
+
+a:link{
+	color: #505050;
+	text-decoration: none;
+	margin-right: 10px;
+}
+a:hover{
+	text-decoration: underline;
+}
+
+button{
+	background-color: #4285f4;
+	color: white;
+	font-weight: bold;
+	height: 2.75em;
+	width: 6em;
+	border: none;
+}
+
+#logo{
+	text-align: center;
+	margin-top: 200px;
+}
+
+img{
+	height: 6em;
+}
+
+#src-box-container{
+	margin-top: 1em;
+	text-align: center;
+}
+#src-box{
+	font-size: 20px;
+	width: 25em;
+	color: red;
+	border: 1px solid #4285f4;
+	background: url(http://a.dryicons.com/images/icon_sets/symbolize_icons_set/png/128x128/microphone.png) no-repeat;
+	background-size: 18px;
+	background-position: right;
+}
+#src-btn-container{
+	margin-top: 10px;
+	text-align: center;
+}
+.src-btn{
+	height: 29px;
+	width: 120px;
+	background-color: #E8E8E8;
+	color: #444;
+	border: 1px solid rgba(0,0,0,0.1);
+	margin-right: 10px;
+}
+
+.foot{
+	margin: 0;
+	position: absolute;
+	width: 100%;
+	bottom: 0em;
+	height: 40px;
+	background-color: #E8E8E8;
+}
+.l-foot, .r-foot{
+	position: absolute;
+	display: inline-block;
+	top: .75em;
+}
+.r-foot{
+	right: 10px;
+}
+.l-foot{
+	left: 10px;
+}

@@ -1,0 +1,32 @@
+<html>
+<head>
+	<title>jQuery Slider</title>
+
+	<link rel="stylesheet" type="text/css" href="css/slider.css">
+</head>
+<body>
+
+<div class="wrapper">
+
+	<div id="slider">
+		<img id="1" src="images/los_angeles_vista.jpg">
+		<img id="2" src="images/marshall_high.jpg">
+		<img id="3" src="images/south_seas.jpg">
+		<img id="4" src="images/trax.jpg">
+		<img id="5" src="images/venice_graffiti.jpg">
+	</div>
+
+	<!-- I'll have to build the functions into the a tag with return = false or change
+	these to div elements to avoid screen refresh -->
+<!-- 	<div class="left">Previous</div>
+	<div class="right">Next</div> -->
+
+	<a href="#" class="left" onclick="prev(); return false;">Previous</a>
+	<a href="#" class="right" onclick="next(); return false;">Next</a>
+
+</div>
+
+<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="js/slider.js"></script>
+</body>
+</html>

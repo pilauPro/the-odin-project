@@ -1,0 +1,32 @@
+*{
+	font-family: 'Arial';
+}
+
+#clear{
+	border: none;
+	height: 30px;
+	width: 60px;
+	background-color: #80E6FF;
+	color: #748080;
+	text-align: center;
+	margin-bottom: 10px;
+	font-size: 16px;
+}
+
+h4{
+	display: inline-block;
+	margin-right: 10px;
+}
+
+.container{
+	width: 100%;
+	height: 100%;
+}
+
+.bordered{
+	height: 60px;
+	width: 60px;
+	display: inline-block;
+	border: 1px solid black;
+	opacity: .1;
+}
