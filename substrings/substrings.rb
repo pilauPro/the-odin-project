@@ -1,11 +1,13 @@
 def substrings(input, dictionary)
 	results = {}
 	dictionary.each do |word|
-		if input.include?(word)
-			if results.has_key?(word)
-				results[word] = 2
-			else 
-				results[word] = 1
+		input.each do |e|
+			if e.downcase.include?(word.downcase)
+				if results.has_key?(word.downcase)
+					results[word] += 1
+				else 
+					results[word] = 1
+				end
 			end
 		end
 	end
@@ -23,8 +25,6 @@ puts "Enter your word/string to search in dictionary:"
 user_input = gets.chomp.split(/[\s+,\.!\?]/)
 user_input.delete("")
 
-puts user_input
+search_hash = substrings(user_input, dictionary) 
 
-# search_hash = substrings(user_input, dictionary) 
-
-# puts search_hash
+puts search_hash
