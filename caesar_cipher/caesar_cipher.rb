@@ -20,33 +20,30 @@ end
 
 alphabet = ('a'..'z').to_a
 index = 0
-coded_text = []
 
 puts "Enter a message to encrypt:"
 
+# split user input into character array
 user_text = gets.chomp.split("")
 
 puts "Enter the shift factor:"
 
 shift = gets.chomp.to_i
 
-user_text.each do |l|
+user_text.map! {|l|
 	if l =~ /\w/
-		# for each letter in the user string, find it's index in the alphabet array, then
-		# pass that index plus the shift factor to the index_adjust function
-		index = alphabet.index(l.downcase)
 
-		index = index_adjust(index + shift)
+		# call index_adjust to shift the index variable to the user specified amount
+		index = index_adjust(alphabet.index(l.downcase) + shift)
 
 		# send the original letter to match_case to set proper case for the shifted letter
-		# and push the case corrected shifted letter to the coded_text array
-		coded_text.push(match_case(l, alphabet[index]))
+		# and update the case corrected shifted letter to the array
+		match_case(l, alphabet[index])
 	else
-		# If l is not a letter (punctuation or space), simply push it to the coded_text
-		# array unaltered
-		coded_text.push(l)
+		# Keep the original character if non-alpha (punctuation or space)
+		l
 	end
-end
+}
 
-puts coded_text.join("")
-
+# rejoin updated array to string for screen output
+puts user_text.join
