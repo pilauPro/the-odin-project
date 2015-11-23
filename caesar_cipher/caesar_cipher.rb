@@ -32,13 +32,18 @@ shift = gets.chomp.to_i
 
 user_text.each do |l|
 	if l =~ /\w/
-
+		# for each letter in the user string, find it's index in the alphabet array, then
+		# pass that index plus the shift factor to the index_adjust function
 		index = alphabet.index(l.downcase)
 
 		index = index_adjust(index + shift)
 
+		# send the original letter to match_case to set proper case for the shifted letter
+		# and push the case corrected shifted letter to the coded_text array
 		coded_text.push(match_case(l, alphabet[index]))
 	else
+		# If l is not a letter (punctuation or space), simply push it to the coded_text
+		# array unaltered
 		coded_text.push(l)
 	end
 end
