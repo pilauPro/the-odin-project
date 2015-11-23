@@ -1,3 +1,6 @@
+# for each dictionary entry, search against input word(s) and create
+# a new key in the hash with value 1 or add one to existing keys and return complete
+# search hash
 def substrings(input, dictionary)
 	results = {}
 	dictionary.each do |word|
@@ -22,9 +25,11 @@ dictionary.delete("")
 
 puts "Enter your word/string to search in dictionary:"
 
-user_input = gets.chomp.split(/[\s+,\.!\?]/)
+# make array of words from user input, splitting on non alpha characters
+user_input = gets.chomp.split(/[\W+]/)
 user_input.delete("")
 
+# send user_input & dictionary arrays and store result in hash
 search_hash = substrings(user_input, dictionary) 
 
 puts search_hash
