@@ -1,13 +1,9 @@
 def substrings(input, dictionary)
-	results = {}
+	results = Hash.new(0)
 	dictionary.each do |word|
 		input.each do |e|
 			if e.downcase.include?(word.downcase)
-				if results.has_key?(word.downcase)
-					results[word] += 1
-				else 
-					results[word] = 1
-				end
+				results[word] += 1
 			end
 		end
 	end
