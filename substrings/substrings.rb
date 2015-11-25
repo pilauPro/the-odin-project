@@ -10,7 +10,7 @@ def substrings(input, dictionary)
 			end
 		end
 	end
-	return results
+	return results.sort!
 end
 
 
