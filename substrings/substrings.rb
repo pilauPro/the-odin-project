@@ -6,11 +6,11 @@ def substrings(input, dictionary)
 	dictionary.each do |word|
 		input.each do |e|
 			if e.downcase.include?(word.downcase)
-				results[word] += 1
+				results[word.to_sym] += 1
 			end
 		end
 	end
-	return results.sort!
+	return results.sort
 end
 
 
@@ -28,4 +28,4 @@ user_input.delete("")
 # send user_input & dictionary arrays and store result in hash
 search_hash = substrings(user_input, dictionary) 
 
-puts search_hash
+puts search_hash.to_s
