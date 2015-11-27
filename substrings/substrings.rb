@@ -5,9 +5,7 @@ def substrings(input, dictionary)
 	results = Hash.new(0)
 	dictionary.each do |word|
 		input.each do |e|
-			if e.downcase.include?(word.downcase)
-				results[word.to_sym] += 1
-			end
+			results[word.to_sym] += 1 if e.downcase.include?(word.downcase)
 		end
 	end
 	return results.sort
