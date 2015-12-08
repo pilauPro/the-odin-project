@@ -12,8 +12,8 @@ def bubble_sort_by(arr, &block)
         }
         arr
 end
-compare = Proc.new{|x,y| x<=>y}
+
 
 input = [5,4,20,1,60,100,3,7,1000,2]
 
-puts bubble_sort_by(input, &compare).inspect
+puts bubble_sort_by(input){|x,y| x<=>y}.inspect
