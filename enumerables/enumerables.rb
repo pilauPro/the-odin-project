@@ -27,9 +27,12 @@ module Enumberable
 	    end
 	end
 	def my_all?(arr, &block)
-	    test = true
-	    my_each(arr){|x| test = false if !yield(x)}
-	    test
+	    my_each(arr){|x| return false if !yield(x)}
+	    true
+	end
+	def my_any?(arr, &block)
+	    my_each(arr){|x| return true if yield(x)}
+	    false
 	end
 end
 
