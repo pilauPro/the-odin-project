@@ -19,12 +19,8 @@ module Enumberable
 	end
 	def my_select(arr, &block)
 	    result = []
-	    if block_given?
-	        my_each(arr) do |x|
-	            result << x if yield(x)
-	        end
-	        result
-	    end
+        my_each(arr){|x| result << x if yield(x)}
+        result
 	end
 	def my_all?(arr, &block)
 	    my_each(arr){|x| return false if !yield(x)}
@@ -34,14 +30,25 @@ module Enumberable
 	    my_each(arr){|x| return true if yield(x)}
 	    false
 	end
+	def my_none?(arr, &block)
+		if block_given?
+			my_each(arr){|x| return false if yield(x)}
+			true
+		else
+			my_each(arr){|x| return false if x}
+			true
+		end
+	end
 end
 
 include Enumberable
 
-arr = [1,2,3,4,5]
+# arr = [1,2,3,4,5,6]
+arr = [false,false,nil]
 
-my_each(arr){|x| puts "element: #{x}"}
-my_each_with_index(arr){|item,index| puts "item: #{item} index: #{index}"}
-arr2 = my_select(arr){|x| x%2 == 0}
-puts arr2
-puts my_all?(arr){|x| x.class == Fixnum}
+# my_each(arr){|x| puts "element: #{x}"}
+# my_each_with_index(arr){|item,index| puts "item: #{item} index: #{index}"}
+# arr2 = my_select(arr){|x| x%2 == 0}
+# puts arr2
+# puts my_all?(arr){|x| x.class == Fixnum}
+puts my_none?(arr)
