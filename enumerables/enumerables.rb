@@ -17,20 +17,20 @@ module Enumberable
 	    }
 	    arr
 	end
-	def my_select(arr, &block)
+	def my_select(arr)
 	    result = []
         my_each(arr){|x| result << x if yield(x)}
         result
 	end
-	def my_all?(arr, &block)
+	def my_all?(arr)
 	    my_each(arr){|x| return false if !yield(x)}
 	    true
 	end
-	def my_any?(arr, &block)
+	def my_any?(arr)
 	    my_each(arr){|x| return true if yield(x)}
 	    false
 	end
-	def my_none?(arr, &block)
+	def my_none?(arr)
 		if block_given?
 			my_each(arr){|x| return false if yield(x)}
 			true
