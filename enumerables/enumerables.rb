@@ -44,7 +44,7 @@ module Enumberable
 		if block_given?
         		my_each(arr){|x| counter += 1 if yield(x)}
     		else
-        		arr.each{|x| counter += 1 if x} 
+        		my_each(arr){|x| counter += 1 if x} 
     		end
     		counter
 	end
