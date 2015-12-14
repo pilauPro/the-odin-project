@@ -57,6 +57,12 @@ module Enumberable
         		return arr.to_enum
     		end
 	end
+	def my_inject(arr, memo=0)
+    		if block_given?
+        		my_each(arr){|x| memo = yield(memo, x)}
+        		memo
+    		end
+	end
 end
 
 include Enumberable
