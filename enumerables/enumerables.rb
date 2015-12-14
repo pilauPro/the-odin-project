@@ -48,6 +48,15 @@ module Enumberable
     		end
     		counter
 	end
+	def my_map(arr)
+    		new_arr = []
+    		if block_given?
+		        my_each(arr){|x| new_arr << yield(x)}
+		        new_arr
+	    	else
+        		return arr.to_enum
+    		end
+	end
 end
 
 include Enumberable
