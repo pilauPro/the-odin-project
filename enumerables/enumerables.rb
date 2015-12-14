@@ -63,6 +63,9 @@ module Enumberable
         		memo
     		end
 	end
+	def multiply_els(arr)
+    		my_inject(arr,1){|sum,x| sum = sum * x}
+	end
 end
 
 include Enumberable
