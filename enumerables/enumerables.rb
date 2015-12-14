@@ -53,9 +53,15 @@ module Enumberable
     		if block_given?
 		        my_each(arr){|x| new_arr << yield(x)}
 		        new_arr
-	    	else
-        		return arr.to_enum
-    		end
+	    	end
+	end
+	def my_map_proc(arr, proc=nil)
+    		new_arr = []
+    		if block_given? && proc
+    			my_each(arr){|x| new_arr << yield(x)}
+		        my_each(arr){|x| new_arr << proc.call(x)}
+		        new_arr
+		end
 	end
 	def my_inject(arr, memo=0)
     		if block_given?
