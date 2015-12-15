@@ -74,5 +74,3 @@ module Enumberable
 	end
 end
 
-include Enumberable
-
