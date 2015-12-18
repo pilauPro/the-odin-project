@@ -1,34 +1,34 @@
 module Enumberable
 	def my_each(arr)
-	    i = 0
-	    if block_given?
-	        (arr.size).times{
-	            yield arr[i]
-	            i+= 1
-	        }
-	        arr
-	    end
+	    	i = 0
+	    	if block_given?
+	        	(arr.size).times{
+	            		yield arr[i]
+	            		i+= 1
+	        	}
+	        	arr
+	    	end
 	end
 	def my_each_with_index(arr)
-	    i = 0
-	    (arr.size).times{
-	        yield arr[i],i
-	        i+= 1
-	    }
-	    arr
+	    	i = 0
+	    	(arr.size).times{
+	        	yield arr[i],i
+	        	i+= 1
+	    	}
+	    	arr
 	end
 	def my_select(arr)
-	    result = []
-        my_each(arr){|x| result << x if yield(x)}
-        result
+		result = []
+            	my_each(arr){|x| result << x if yield(x)}
+            	result
 	end
 	def my_all?(arr)
-	    my_each(arr){|x| return false if !yield(x)}
-	    true
+	    	my_each(arr){|x| return false if !yield(x)}
+	    	true
 	end
 	def my_any?(arr)
-	    my_each(arr){|x| return true if yield(x)}
-	    false
+	    	my_each(arr){|x| return true if yield(x)}
+	    	false
 	end
 	def my_none?(arr)
 		if block_given?
