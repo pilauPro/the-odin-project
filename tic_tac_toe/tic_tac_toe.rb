@@ -3,9 +3,15 @@ class TicTacToe
 	    def initial_greeting
 	        puts "WELCOME TO TIC-TAC-TOE"
 	    end
+
 	    def prompt_move(side)
 	        puts "Your move, #{side}. Pick a square (1-3,1-3):"
 	    end
+
+	    def prompt_game
+	    	puts "Play again (y/n)?"
+	    end
+
 	    def invalid_selection
 	        "Invaid selection. Pick Again (1-3, 1-3):"
 	    end
@@ -14,12 +20,15 @@ class TicTacToe
     include GameHelper
     
 	attr_accessor :game, :stats
+	
 	def initialize
 		@game = GameNavigator.new
 		@stats = GameStats.new
 	end
 
 	class GameStats
+		# attr_accessor :games_played, :x_games_won, :o_games_won
+	    
 	    @@games_played = 0
 	    @@x_games_won = 0
 	    @@o_games_won = 0
@@ -28,8 +37,16 @@ class TicTacToe
 	  
 	    end
 	    
-	    def show_games_played
-	        puts @@games_played
+	    def increment_games_played
+	    	@@games_played += 1
+	    end
+
+	    def games_played
+	        @@games_played
+	    end
+
+	    def x_games_won
+	    	@@x_games_won
 	    end
 	end
 	
@@ -38,7 +55,7 @@ class TicTacToe
 	    def initialize
 	        @board = []
 	        @move = []
-	        @moves = 1
+	        @moves = 0
 	        3.times{@board << [nil, nil, nil]}
 	    end
 	    
@@ -47,6 +64,11 @@ class TicTacToe
     			row.each{ |square| print square ? "|#{square}" : "| " }
     			print "|\n"
     		}
+	    end
+
+	    def display_result
+	    	puts "#{determine_winning_move} wins the game." if game_winner?
+	    	puts "Tie game" if full_board?
 	    end
 
 	    def split_choice(choice)
@@ -64,7 +86,11 @@ class TicTacToe
 	    end
 	    
 	    def determine_move
-	        @moves.odd? ? "X" : "O"
+	        @moves.even? || @moves == 0 ? "X" : "O"
+	    end
+
+	    def determine_winning_move
+	    	@moves.odd? ? "X" : "O"
 	    end
 	    
 	    def mark_move(mark)
@@ -76,29 +102,38 @@ class TicTacToe
     	end
 
     	def game_over?
-    		full_board? || row_winner? || column_winner? || diagonal_winner?
+    		full_board? || game_winner?
+    	end
+
+    	def game_winner?
+    		row_winner? || column_winner? || diagonal_winner?
     	end
 
     	def row_winner?
-    		@board.find_index{ |row| row == ["X", "X", "X"] || row == ["O", "O", "O"]}
+    		@board.find_index{ |row| row.join == "XXX" || row.join == "OOO"}
     	end
 
     	def column_winner?
-    		make_vert_array.find_index{ |row| row == ["X", "X", "X"] || row == ["O", "O", "O"]}
+    		make_vert_arrays.find_index{ |row| row.join == "XXX" || row.join == "OOO"}
     	end
 
     	def diagonal_winner?
-			true if [@board[0][0], @board[1][1], @board[2][2]] == ["X", "X", "X"] || [@board[0][0], @board[1][1], @board[2][2]] == ["O", "O", "O"]
-			true if [@board[0][2], @board[1][1], @board[2][0]] == ["X", "X", "X"] || [@board[0][2], @board[1][1], @board[2][0]] == ["O", "O", "O"]
+    		make_diag_arrays.any?{|diag| diag.join == "XXX" || diag.join == "OOO"}
     	end
 
     	def full_board?
     		@board.all?{|row|
-			    row.all?{|space| space}
+			    row.all?{|square| square}
 			}	
     	end
 
-    	def make_vert_array
+    	def make_diag_arrays
+    		diag1 = [@board[0][0], @board[1][1], @board[2][2]]
+    		diag2 = [@board[0][2], @board[1][1], @board[2][0]]
+    		return [diag1, diag2]
+    	end
+
+    	def make_vert_arrays
     		i = 0
     		vert_ar = []
     		3.times{ 
@@ -111,31 +146,48 @@ class TicTacToe
 	
 end
 
-# Create TicTacToe instance
-current = TicTacToe.new
 
 
-# Set loop control variable
 continue = true
 
-# Print initial greeting
-current.initial_greeting
-
-
-# Continue game loop until win or tie is reached
 while continue
-    current.prompt_move(current.game.determine_move)
-    begin
-        current.game.split_choice(gets.chomp)
-        raise current.invalid_selection if current.game.invalid_move || current.game.square_occupied?
-    rescue => e
-        puts e
-        retry
-    end
 
-    current.game.mark_move(current.game.determine_move)
-    current.game.display_board
-    current.game.increment_moves
-    
-    continue = false if current.game.game_over?
+	# Create TicTacToe instance
+	current = TicTacToe.new
+
+	# Print initial greeting, once
+	current.initial_greeting if current.stats.games_played == 0
+
+	# Set loop control variable
+	ingame = true
+
+	# Continue game loop until win or tie is reached
+	while ingame
+	    current.prompt_move(current.game.determine_move)
+	    begin
+	        current.game.split_choice(gets.chomp)
+	        raise current.invalid_selection if current.game.invalid_move || current.game.square_occupied?
+	    rescue => e
+	        puts e
+	        retry
+	    end
+
+	    current.game.mark_move(current.game.determine_move)
+	    current.game.display_board
+	    current.game.increment_moves
+	    
+	    ingame = false if current.game.game_over?
+	end
+
+	# Show results of finished game
+	current.game.display_result
+
+	# update Class counters
+	current.stats.increment_games_played
+	puts "games played: #{current.stats.games_played}"
+
+	# Prompt user to play another game or exit program
+	current.prompt_game
+	continue = false if gets.chomp.downcase == "n"
+
 end
