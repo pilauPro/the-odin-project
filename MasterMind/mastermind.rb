@@ -46,12 +46,11 @@ class MasterMind
     
     def initialize
         @game = Game.new
-        @moves_remaining = 12
     end
     
-    # This class contains the randomly generated code to solve, other attributes and functions for the game
+    # This class contains the attributes and functions for the game
     class Game
-        attr_accessor :code, :word_code, :guess
+        attr_accessor :code, :word_code, :guess, :remaining_guesses
         
         include GameHelper
         
@@ -60,7 +59,7 @@ class MasterMind
             @code = generate_code
             @word_code = convert_code
             @guess = []
-            @word_guess = []
+            @remaining_guesses = 12
         end
         
         # calls on translate_num_to_color to convert numbers to colors
@@ -72,14 +71,25 @@ class MasterMind
         def capture_guess(user_input)
             @guess = user_input.scan(/./)
         end
+
         def verify_guess
             verify_letters && verify_size
         end
+
         def verify_letters
             @guess.all?{ |letter| letter =~ /[bwrg]/ }
         end
+
         def verify_size
             @guess.size == 4
+        end
+
+        def decrement_guesses
+            @remaining_guesses -= 1
+        end
+
+        def code_guessed?
+            @guess.map{ |letter| translate_color_to_num(letter) } == @code
         end
     end
 end
@@ -87,18 +97,33 @@ end
 # Create MasterMind Instance
 current = MasterMind.new
 
-puts "Enter your code guess:"
+# loop until code is guessed or remaining guesses run out
+until current.game.code_guessed? || current.game.remaining_guesses == 0
 
-begin
+    puts "The code is: #{current.game.code}"
+    puts "Enter your code guess:"
 
-    current.game.capture_guess(gets.chomp.downcase)
-    
-    raise current.game.invalid_selection unless current.game.verify_guess
-    
-    
-rescue => e
-    puts e
-    
+    # Loop until valid user entry is captured
+    begin
+
+        # capture user code guess
+        current.game.capture_guess(gets.chomp.downcase)
+        
+        # raise exception if invalid user entry
+        raise current.game.invalid_selection unless current.game.verify_guess
+        
+    rescue => e
+        puts e
+        retry
+    end
+
+    # decrement remaining guesses
+    current.game.decrement_guesses
+
+
+    if current.game.code_guessed?
+        puts "You broke the code, MasterMind!"
+    else
+        puts "Incorrect guess."
+    end
 end
-
-current.game.guess.each{|el| puts el }
