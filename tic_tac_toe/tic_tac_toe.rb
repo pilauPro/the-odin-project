@@ -27,26 +27,47 @@ class TicTacToe
 	end
 
 	class GameStats
-		# attr_accessor :games_played, :x_games_won, :o_games_won
+		# attr_accessor :winner, :games_played, :x_games_won, :o_games_won, :ties
 	    
 	    @@games_played = 0
 	    @@x_games_won = 0
 	    @@o_games_won = 0
+	    @@ties = 0
 	    
 	    def initialize
 	  
 	    end
 	    
+	    def set_winner(side)
+	        @winner = side.to_sym
+	    end
+	    
 	    def increment_games_played
 	    	@@games_played += 1
 	    end
-
+	    
+	    def increment_ties
+	        @@ties += 1
+	    end
+    
+        def increment_winner
+            @winner == :X ? @@x_games_won += 1 : @@o_games_won += 1
+        end
+        
 	    def games_played
 	        @@games_played
 	    end
-
+	    
 	    def x_games_won
-	    	@@x_games_won
+	        @@x_games_won
+	    end
+        
+        def o_games_won
+	        @@o_games_won
+	    end
+	    
+	    def games_tied
+	        @@ties
 	    end
 	end
 	
@@ -108,7 +129,11 @@ class TicTacToe
     	def game_winner?
     		row_winner? || column_winner? || diagonal_winner?
     	end
-
+        
+        def tie_game?
+            full_board? && !game_winner?
+        end
+        
     	def row_winner?
     		@board.find_index{ |row| row.join == "XXX" || row.join == "OOO"}
     	end
@@ -184,8 +209,19 @@ while continue
 
 	# update Class counters
 	current.stats.increment_games_played
+	if current.game.game_winner?
+	    current.stats.set_winner(current.game.determine_winning_move)
+	    current.stats.increment_winner
+	else
+	    current.stats.increment_ties
+	end
+	
 	puts "games played: #{current.stats.games_played}"
+    puts "X games won: #{current.stats.x_games_won}"
+    puts "O games won: #{current.stats.o_games_won}"
+    puts "ties: #{current.stats.games_tied}"
 
+    
 	# Prompt user to play another game or exit program
 	current.prompt_game
 	continue = false if gets.chomp.downcase == "n"
