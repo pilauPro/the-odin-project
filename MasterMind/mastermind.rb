@@ -113,7 +113,9 @@ class MasterMind
         
         def color_matches
             colorarr = [0,0,0,0]
-            clone = @code
+            
+            # use dup to make a shallow copy of the @code variable, otherwise changes to clone will change @code itself
+            clone = @code.dup
             4.times{|x|
                 if clone.include?(@num_guess[x])
                     colorarr[x] = 1
