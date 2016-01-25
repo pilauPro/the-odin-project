@@ -50,7 +50,7 @@ class MasterMind
     
     # This class contains the attributes and functions for the game
     class Game
-        attr_accessor :code, :word_code, :guess, :remaining_guesses
+        attr_accessor :code, :word_code, :guess, :num_guess, :remaining_guesses
         
         include GameHelper
         
@@ -59,6 +59,7 @@ class MasterMind
             @code = generate_code
             @word_code = convert_code
             @guess = []
+            @num_guess = []
             @remaining_guesses = 12
         end
         
@@ -87,9 +88,41 @@ class MasterMind
         def decrement_guesses
             @remaining_guesses -= 1
         end
-
+        
+        def convert_guess
+            @num_guess = @guess.map{ |letter| translate_color_to_num(letter) }
+        end
+        
         def code_guessed?
-            @guess.map{ |letter| translate_color_to_num(letter) } == @code
+            @num_guess == @code
+        end
+        
+        def turn_result
+            result = []
+            4.times {|x|
+                result << [(exact_matches[x] + color_matches[x]), 2].min
+            }
+            result
+        end
+        
+        def exact_matches
+            exactarr = [0,0,0,0]
+            4.times{ |x| exactarr[x] = 2 if @num_guess[x] == @code[x] }
+            exactarr
+        end
+        
+        def color_matches
+            colorarr = [0,0,0,0]
+            clone = @code
+            4.times{|x|
+                if clone.include?(@num_guess[x])
+                    colorarr[x] = 1
+                    puts "code before delete: #{@code}"
+                    clone.delete_at(clone.find_index(@num_guess[x]))
+                    puts "code after delete: #{@code}"
+                end
+            }
+            colorarr
         end
     end
 end
@@ -116,7 +149,10 @@ until current.game.code_guessed? || current.game.remaining_guesses == 0
         puts e
         retry
     end
-
+    
+    # convert user guess to numerical
+    current.game.convert_guess
+    
     # decrement remaining guesses
     current.game.decrement_guesses
 
@@ -124,6 +160,7 @@ until current.game.code_guessed? || current.game.remaining_guesses == 0
     if current.game.code_guessed?
         puts "You broke the code, MasterMind!"
     else
-        puts "Incorrect guess."
+        puts "Incorrect guess.  Your result:"
+        puts "#{current.game.turn_result}"
     end
 end
