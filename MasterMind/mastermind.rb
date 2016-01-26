@@ -1,4 +1,5 @@
 # This class contains the modules / subclasses required to run the MasterMind game
+# This class contains the modules / subclasses required to run the MasterMind game
 class MasterMind
     attr_accessor :game, :moves_remaining, :guess
     
@@ -93,57 +94,43 @@ class MasterMind
             @num_guess = @guess.map{ |letter| translate_color_to_num(letter) }
         end
         
-        def code_guessed?
+        # returns true if the code is guessed correctly
+        def code_cracked?
             @num_guess == @code
         end
         
+        # print the player's turn result
         def turn_result
-            # result = []
-            # 4.times {|x|
-            #     result << [(exact_matches[x] + color_matches[x]), 2].min
-            # }
-            # result
-
-            colormatches = 0
-
-            results = exact_matches
-            results[1].each{|num|
-                colormatches += 1 if results[2].any?{|x| x == num}
-            }
-
-
-            puts "matches: #{results[0]}"
-            puts "color matches: #{colormatches}"
+            puts "matches: #{exact_matches}"
+            puts "color matches: #{color_matches(get_code_remainder, get_guess_remainder)}"
         end
         
+        # returns number of color matches for the guess. Takes unmatched code & guess arrays as inputs.
+        def color_matches(code, guess)
+            colormatches = 0
+            guess.each{ |num| colormatches += 1 if code.any?{|x| x == num} }
+            colormatches
+        end
+        
+        # makes an array of code elements not matched by the guess
+        def get_code_remainder
+            code_remainder = []
+            4.times{ |x| code_remainder << @code[x] if @num_guess[x] != @code[x] }
+            code_remainder
+        end
+        
+        # makes an array of guess elements not matching the code
+        def get_guess_remainder
+            guess_remainder = []
+            4.times{ |x| guess_remainder << @num_guess[x] if @num_guess[x] != @code[x] }
+            guess_remainder
+        end
+        
+        # returns the number of exact matches in the guess
         def exact_matches
             matches = 0
-            code_clone = @code.dup
-            guess_clone = @num_guess.dup
-            4.times{ |x|
-                if @num_guess[x] == @code[x]
-                    matches += 1
-                    code_clone[x] = 0
-                    guess_clone[x] = 0
-                end
-            }
-            code_clone.delete(0)
-            guess_clone.delete(0)
-            [matches, code_clone, guess_clone]
-        end
-        
-        def color_matches
-            colorarr = [0,0,0,0]
-            
-            # use dup to make a shallow copy of the @code variable, otherwise changes to clone will change @code itself
-            clone = @code.dup
-            4.times{|x|
-                if clone.include?(@num_guess[x])
-                    colorarr[x] = 1
-                    clone.delete_at(clone.find_index(@num_guess[x]))
-                end
-            }
-            colorarr
+            4.times{ |x| matches += 1 if @num_guess[x] == @code[x] }
+            matches
         end
     end
 end
@@ -152,7 +139,7 @@ end
 current = MasterMind.new
 
 # loop until code is guessed or remaining guesses run out
-until current.game.code_guessed? || current.game.remaining_guesses == 0
+until current.game.code_cracked? || current.game.remaining_guesses == 0
 
     puts "The code is: #{current.game.code}"
     puts "Enter your code guess:"
@@ -178,8 +165,8 @@ until current.game.code_guessed? || current.game.remaining_guesses == 0
     current.game.decrement_guesses
 
 
-    if current.game.code_guessed?
-        puts "You broke the code, MasterMind!"
+    if current.game.code_cracked?
+        puts "You cracked the code, MasterMind!"
     else
         puts "Incorrect guess.  Your result:"
         puts "#{current.game.turn_result}"
