@@ -98,17 +98,38 @@ class MasterMind
         end
         
         def turn_result
-            result = []
-            4.times {|x|
-                result << [(exact_matches[x] + color_matches[x]), 2].min
+            # result = []
+            # 4.times {|x|
+            #     result << [(exact_matches[x] + color_matches[x]), 2].min
+            # }
+            # result
+
+            colormatches = 0
+
+            results = exact_matches
+            results[1].each{|num|
+                colormatches += 1 if results[2].any?{|x| x == num}
             }
-            result
+
+
+            puts "matches: #{results[0]}"
+            puts "color matches: #{colormatches}"
         end
         
         def exact_matches
-            exactarr = [0,0,0,0]
-            4.times{ |x| exactarr[x] = 2 if @num_guess[x] == @code[x] }
-            exactarr
+            matches = 0
+            code_clone = @code.dup
+            guess_clone = @num_guess.dup
+            4.times{ |x|
+                if @num_guess[x] == @code[x]
+                    matches += 1
+                    code_clone[x] = 0
+                    guess_clone[x] = 0
+                end
+            }
+            code_clone.delete(0)
+            guess_clone.delete(0)
+            [matches, code_clone, guess_clone]
         end
         
         def color_matches
@@ -119,9 +140,7 @@ class MasterMind
             4.times{|x|
                 if clone.include?(@num_guess[x])
                     colorarr[x] = 1
-                    puts "code before delete: #{@code}"
                     clone.delete_at(clone.find_index(@num_guess[x]))
-                    puts "code after delete: #{@code}"
                 end
             }
             colorarr
