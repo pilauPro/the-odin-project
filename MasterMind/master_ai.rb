@@ -9,6 +9,7 @@ class MasterMind
         @exactgrid = [0]
         @colorgrid = [0]
         @counter = 0
+        @bestguess = 1
     end
     
     def self.increment_guessestosolve(trys)
@@ -35,6 +36,15 @@ class MasterMind
         @counter += 1
     end
     
+    def set_best_guess
+        @bestguess = @exactgrid.find_index(@exactgrid.max)
+        @bestguess > 0 ? @bestguess : @bestguess = 1
+    end
+    
+    def best_guess
+        @exactgrid[@bestguess]
+    end
+    
     def random_guess
         temp = []
         4.times{ temp << rand(1..4) }
@@ -44,6 +54,7 @@ class MasterMind
         
         @exactgrid << exact_matches
         @colorgrid << color_matches
+        set_best_guess
     end
     
     def random_number
@@ -58,7 +69,7 @@ class MasterMind
         !@guessgrid.include?(newguess)
     end
     
-    def build_guess
+    def build_guess(loc=@counter)
         indexes = []
         unique = false
         
@@ -67,10 +78,10 @@ class MasterMind
             indexes.clear
             
             # populate indexes array with random index locations, equal in number to exact matches of last guess
-            exact_matches.times{ indexes << random_index }
+            exact_matches(loc).times{ indexes << random_index }
             
             # store a number of elements, equal to the size of indexes array, from the last guess in the temp array
-            indexes.size.times{ |x| temp[indexes[x]] = @guessgrid[counter][indexes[x]] }
+            indexes.size.times{ |x| temp[indexes[x]] = @guessgrid[loc][indexes[x]] }
             
             # fill in the remaining elements of the temp array with random numbers
             temp.map!{ |num| num == 0 ? num = random_number : num }
@@ -84,13 +95,16 @@ class MasterMind
         @guessgrid << temp
         @exactgrid << exact_matches
         @colorgrid << color_matches
+        set_best_guess
     end
     
     def next_guess
         if exact_matches == 0
             random_guess
-        else
+        elsif exact_matches > best_guess
             build_guess
+        else
+            build_guess(set_best_guess)
         end
     end
     
@@ -121,23 +135,23 @@ class MasterMind
     end
     
     # makes an array of code elements not matched by the guess
-    def get_code_remainder
+    def get_code_remainder(loc=@counter)
         code_remainder = []
-        4.times{ |x| code_remainder << @code[x] if @guessgrid[@counter][x] != @code[x] }
+        4.times{ |x| code_remainder << @code[x] if @guessgrid[loc][x] != @code[x] }
         code_remainder
     end
     
     # makes an array of guess elements not matching the code
-    def get_guess_remainder
+    def get_guess_remainder(loc=@counter)
         guess_remainder = []
-        4.times{ |x| guess_remainder << @guessgrid[@counter][x] if @guessgrid[@counter][x] != @code[x] }
+        4.times{ |x| guess_remainder << @guessgrid[loc][x] if @guessgrid[loc][x] != @code[x] }
         guess_remainder
     end
     
     # returns the number of exact matches in the guess
-    def exact_matches
+    def exact_matches(loc=@counter)
         matches = 0
-        4.times{ |x| matches += 1 if @guessgrid[@counter][x] == @code[x] }
+        4.times{ |x| matches += 1 if @guessgrid[loc][x] == @code[x] }
         matches
     end
     
@@ -156,7 +170,7 @@ end
     # current.update_best
     
     until current.code_cracked?
-        current.random_guess
+        current.next_guess
     end
     if current.code_cracked? 
             # puts "MasterMind!, in #{current.counter} guesses."
