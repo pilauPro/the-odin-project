@@ -4,7 +4,7 @@ class MasterMind
     @@gameswon = 0
     
     def initialize
-        @code = [1,3,2,2]
+        @code = random_code
         @guessgrid = [[0,0,0,0]]
         @exactgrid = [0]
         @colorgrid = [0]
@@ -53,6 +53,12 @@ class MasterMind
         @bestguess > 0 ? @bestguess : @bestguess = 1
     end
     
+    
+    def random_code
+        temp = []
+        4.times{ temp << rand(1..4) }
+        temp
+    end
     
     def best_exact
         @exactgrid[@bestguess]
