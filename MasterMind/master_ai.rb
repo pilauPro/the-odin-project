@@ -10,6 +10,7 @@ class MasterMind
         @colorgrid = [0]
         @counter = 0
         @bestguess = 1
+        @bestcombined = 0
     end
     
     def self.increment_guessestosolve(trys)
@@ -36,12 +37,24 @@ class MasterMind
         @counter += 1
     end
     
-    def set_best_guess
+    def set_best_combined
+        temp = []
+        @exactgrid.size.times{ |x| temp << @exactgrid[x] + @colorgrid[x] }
+        @bestcombined = temp.find_index(temp.max)
+        @bestcombined > 0 ? @bestcombined : @bestcombined = 1
+    end
+    
+    def best_combined
+        @exactgrid[set_best_combined]
+    end
+    
+    def set_best_exact
         @bestguess = @exactgrid.find_index(@exactgrid.max)
         @bestguess > 0 ? @bestguess : @bestguess = 1
     end
     
-    def best_guess
+    
+    def best_exact
         @exactgrid[@bestguess]
     end
     
@@ -54,7 +67,7 @@ class MasterMind
         
         @exactgrid << exact_matches
         @colorgrid << color_matches
-        set_best_guess
+        set_best_exact
     end
     
     def random_number
@@ -71,21 +84,45 @@ class MasterMind
     
     def build_guess(loc=@counter)
         indexes = []
+        remaining = [0,1,2,3]
+        randguess = []
+        num = 0
+
         unique = false
         
         until unique
             temp = [0,0,0,0]
+            tempcolor = []
             indexes.clear
+            choice = []
+            deposit = nil
             
             # populate indexes array with random index locations, equal in number to exact matches of last guess
             exact_matches(loc).times{ indexes << random_index }
+
             
             # store a number of elements, equal to the size of indexes array, from the last guess in the temp array
             indexes.size.times{ |x| temp[indexes[x]] = @guessgrid[loc][indexes[x]] }
             
+            
+            # Incorporate color matches here
+            counter = 0
+            if color_matches(loc) > 0
+                # while counter < color_matches(loc) || temp.none?{ |x| x == 0 }
+                until remaining.empty? || temp.none?{ |x| x == 0 }
+                    remaining = remaining - indexes - choice
+                    choice.clear
+                    choice << remaining.sample
+                    temp.size.times{ |x| tempcolor << x if temp[x] == 0 }
+                    deposit = tempcolor.sample
+                    temp[deposit] = @guessgrid[loc][choice.first] if !remaining.empty?
+                    tempcolor.clear
+                    counter += 1
+                end
+            end
+            
             # fill in the remaining elements of the temp array with random numbers
             temp.map!{ |num| num == 0 ? num = random_number : num }
-            
             unique = true if unique_guess?(temp)
         end
         
@@ -95,23 +132,24 @@ class MasterMind
         @guessgrid << temp
         @exactgrid << exact_matches
         @colorgrid << color_matches
-        set_best_guess
+        
+        set_best_exact
     end
     
     def next_guess
         if exact_matches == 0
             random_guess
-        elsif exact_matches > best_guess
+        elsif exact_matches > best_exact
             build_guess
         else
-            build_guess(set_best_guess)
+            build_guess(set_best_exact)
         end
     end
     
     # returns number of color matches for the guess. This needs to be simplified!
-    def color_matches
-        code = get_code_remainder
-        guess = get_guess_remainder
+    def color_matches(loc=@counter)
+        code = get_code_remainder(loc)
+        guess = get_guess_remainder(loc)
         x = 0
         y = 0
         index = 0
@@ -156,18 +194,15 @@ class MasterMind
     end
     
     def code_cracked?
-        exact_matches == 4
+        # exact_matches == 4
+        @guessgrid.last == @code
     end
 end
 
 10000.times{
     current = MasterMind.new
-    # puts "Code: #{current.code.inspect}"
+
     current.random_guess
-    # puts "guess: #{current.guessgrid[current.counter].inspect}"
-    # puts "exactgrid: #{current.exactgrid[current.counter].inspect}"
-    # puts "colorgrid: #{current.colorgrid[current.counter].inspect}"
-    # current.update_best
     
     until current.code_cracked?
         current.next_guess
