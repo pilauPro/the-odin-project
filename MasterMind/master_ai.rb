@@ -1,10 +1,55 @@
 class MasterMind
     attr_reader :guessgrid, :exactgrid, :colorgrid, :counter, :code
+
+    # This module contains functions to facilitate the execution of the MasterMind game
+    module GameHelper
+        # Creates a randomly generated code of four numbers, 1-4
+        def generate_code
+            code = []
+            4.times{ code << rand(1..4) }
+            code
+        end
+        
+        # Translates the number code to corresponding colors
+        def translate_num_to_color(num)
+            case num
+                when 1
+                    "black"
+                when 2
+                    "white"
+                when 3
+                    "red"
+                when 4
+                    "green"
+            end
+        end
+        
+        # Translates colors to the corresponding number codes 1-4
+        def translate_color_to_num(color)
+            case color
+                when "b"
+                    1
+                when "w"
+                    2
+                when "r"
+                    3
+                when "g"
+                    4
+            end
+        end
+        
+        def invalid_selection
+            "invalid selection. Try again:"
+        end
+    end
+
     @@guessestosolve = []
     @@gameswon = 0
     
+    include GameHelper
+
     def initialize
-        @code = random_code
+        @code = generate_code
         @guessgrid = [[0,0,0,0]]
         @exactgrid = [0]
         @colorgrid = [0]
@@ -13,6 +58,8 @@ class MasterMind
         @bestcombined = 0
     end
     
+
+
     def self.increment_guessestosolve(trys)
         @@guessestosolve << trys
     end
@@ -205,7 +252,7 @@ class MasterMind
     end
 end
 
-10000.times{
+10.times{
     current = MasterMind.new
 
     current.random_guess
