@@ -1,5 +1,10 @@
 class MasterMind
+    
     attr_reader :guessgrid, :exactgrid, :colorgrid, :counter, :code
+
+    @@guessestosolve = []
+    @@gameswon = 0
+
 
     # This module contains functions to facilitate the execution of the MasterMind game
     module GameHelper
@@ -42,9 +47,6 @@ class MasterMind
             "invalid selection. Try again:"
         end
     end
-
-    @@guessestosolve = []
-    @@gameswon = 0
     
     include GameHelper
 
