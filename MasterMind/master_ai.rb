@@ -1,6 +1,6 @@
 class MasterMind
     
-    attr_reader :guessgrid, :exactgrid, :colorgrid, :counter, :code
+    attr_reader :guessgrid, :exactgrid, :colorgrid, :counter, :code, :gametype
 
     @@guessestosolve = []
     @@gameswon = 0
@@ -46,6 +46,11 @@ class MasterMind
         def invalid_selection
             "invalid selection. Try again:"
         end
+
+        def prompt_game_type
+            puts "Human, enter 1 to be the code master, or 2 to be the code breaker"
+        end
+
     end
     
     include GameHelper
@@ -59,7 +64,6 @@ class MasterMind
         @bestguess = 1
         @bestcombined = 0
     end
-    
 
 
     def self.increment_guessestosolve(trys)
@@ -84,6 +88,16 @@ class MasterMind
     
     def increment_counter
         @counter += 1
+    end
+
+    def set_game_type(selection)
+        if selection == 1
+            @gametype = :master
+        elsif selection == 2
+            @gametype = :breaker
+        else
+            false
+        end               
     end
     
     def set_best_combined
@@ -254,22 +268,40 @@ class MasterMind
     end
 end
 
-10.times{
-    current = MasterMind.new
+# ****************************************************************
+# ****************************************************************
+# ****************************************************************
 
-    current.random_guess
+current = MasterMind.new
+
+current.prompt_game_type
+
+# Loop until valid game type selection is made
+begin        
+    # raise exception if invalid user entry
+    raise current.invalid_selection unless current.set_game_type(gets.chomp.to_i)
+rescue => e
+    puts e
+    retry
+end
+
+
+# 10.times{
+#     current = MasterMind.new
+
+#     current.random_guess
     
-    until current.code_cracked?
-        current.next_guess
-    end
-    if current.code_cracked? 
-            # puts "MasterMind!, in #{current.counter} guesses."
-            MasterMind.increment_guessestosolve(current.counter)
-            MasterMind.increment_games_won
-    else
-            puts "Code not cracked: #{current.code_cracked?}"
-    end
-}
-puts "average guesses to break code: #{MasterMind.avg_to_solve}"
-puts "games won: #{MasterMind.games_won}"
-puts "winning percentage: #{MasterMind.games_won_percentage}"
+#     until current.code_cracked?
+#         current.next_guess
+#     end
+#     if current.code_cracked? 
+#             # puts "MasterMind!, in #{current.counter} guesses."
+#             MasterMind.increment_guessestosolve(current.counter)
+#             MasterMind.increment_games_won
+#     else
+#             puts "Code not cracked: #{current.code_cracked?}"
+#     end
+# }
+# puts "average guesses to break code: #{MasterMind.avg_to_solve}"
+# puts "games won: #{MasterMind.games_won}"
+# puts "winning percentage: #{MasterMind.games_won_percentage}"
