@@ -140,7 +140,6 @@ class MasterMind
     include GameHelper
 
     def initialize
-        @code = generate_code
         @guessgrid = [[0,0,0,0]]
         @exactgrid = [0]
         @colorgrid = [0]
@@ -185,7 +184,17 @@ class MasterMind
             false
         end               
     end
-    
+
+    def capture_code(input)
+		@code = input.split("").map{ |num| num.to_i }
+   	end
+
+   	def generate_code
+	    code = []
+	    4.times{ code << rand(1..4) }
+	    code
+    end
+
     def set_best_combined
         temp = []
         @exactgrid.size.times{ |x| temp << @exactgrid[x] + @colorgrid[x] }
@@ -376,6 +385,9 @@ end
 
 if current.gametype == :breaker
 	# Run game as code breaker
+
+	current.generate_code
+
 	# loop until code is guessed or remaining guesses run out
 	until current.game.code_cracked? || current.game.remaining_guesses == 0
 
@@ -413,45 +425,27 @@ if current.gametype == :breaker
 
 else
 	# Run game as code master
-	10.times{
-	    current = MasterMind.new
+		puts "Enter code:"
+		current.capture_code(gets.chomp)
 
 	    current.random_guess
-	    
-	    until current.code_cracked?
+	    puts "guess #{current.guessgrid.size - 1}: #{current.guessgrid.last}"
+
+
+	    until current.code_cracked? || current.guessgrid.size == 13
 	        current.next_guess
+	       	puts "guess #{current.guessgrid.size - 1}: #{current.guessgrid.last}"
 	    end
 	    if current.code_cracked? 
-	            # puts "MasterMind!, in #{current.counter} guesses."
+	            puts "Computer cracked the code in #{current.counter} guesses."
 	            MasterMind.increment_guessestosolve(current.counter)
 	            MasterMind.increment_games_won
 	    else
 	            puts "Code not cracked: #{current.code_cracked?}"
 	    end
-	}
-	puts "average guesses to break code: #{MasterMind.avg_to_solve}"
-	puts "games won: #{MasterMind.games_won}"
-	puts "winning percentage: #{MasterMind.games_won_percentage}"
+
+
+	# puts "average guesses to break code: #{MasterMind.avg_to_solve}"
+	# puts "games won: #{MasterMind.games_won}"
+	# puts "winning percentage: #{MasterMind.games_won_percentage}"
 end
-
-
-
-# 10.times{
-#     current = MasterMind.new
-
-#     current.random_guess
-    
-#     until current.code_cracked?
-#         current.next_guess
-#     end
-#     if current.code_cracked? 
-#             # puts "MasterMind!, in #{current.counter} guesses."
-#             MasterMind.increment_guessestosolve(current.counter)
-#             MasterMind.increment_games_won
-#     else
-#             puts "Code not cracked: #{current.code_cracked?}"
-#     end
-# }
-# puts "average guesses to break code: #{MasterMind.avg_to_solve}"
-# puts "games won: #{MasterMind.games_won}"
-# puts "winning percentage: #{MasterMind.games_won_percentage}"
