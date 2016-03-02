@@ -186,7 +186,8 @@ class MasterMind
     end
 
     def capture_code(input)
-		@code = input.split("").map{ |num| num.to_i }
+		# @code = input.split("").select{ |el| el =~ /[^,]/ }.map{ |num| num.to_i }
+		@code = input.split("").select{ |el| el =~ /[^,\s]/ }
    	end
 
    	def generate_code
@@ -242,6 +243,10 @@ class MasterMind
         rand(0..3)
     end
     
+    def valid_code?
+    	@code.all?{ |num| num.to_s =~ /[1-4]/}
+    end
+
     def unique_guess?(newguess)
         !@guessgrid.include?(newguess)
     end
@@ -391,8 +396,8 @@ if current.gametype == :breaker
 	# loop until code is guessed or remaining guesses run out
 	until current.game.code_cracked? || current.game.remaining_guesses == 0
 
-	    puts "The code is: #{current.game.code}"
-	    puts "Enter your code guess:"
+	    # puts "The code is: #{current.game.code}"
+	    puts "Enter your code guess (ex. b,w,r,g):"
 
 	    # Loop until valid user entry is captured
 	    begin
@@ -426,7 +431,16 @@ if current.gametype == :breaker
 else
 	# Run game as code master
 		puts "Enter code:"
-		current.capture_code(gets.chomp)
+
+		begin
+			current.capture_code(gets.chomp)
+
+			raise current.game.invalid_selection unless current.valid_code?
+
+		rescue => e
+			puts e
+			retry
+		end
 
 	    current.random_guess
 	    puts "guess #{current.guessgrid.size - 1}: #{current.guessgrid.last}"
